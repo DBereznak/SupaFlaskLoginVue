@@ -8,9 +8,27 @@
   <body>
     <div id="app">
       <h1>Vue + Flask</h1>
-      <p>{{ test }}</p>
+      <section>
+        <form @submit.prevent="signup">
+          <label for="email">Email:</label>
+          <input id="email" type="text" placeholder="Email" v-model="email" />
+          <br />
+          <label for="password">Password:</label>
+          <input id="password" type="password" v-model="password" />
+          <br />
+          <label for="confirm_password">Confirm Password:</label>
+          <input
+            id="confirm_password"
+            type="password"
+            v-model="confirm_password"
+          />
+          <br />
+          <button type="submit">Signup</button>
+        </form>
+        <p v-if="nomatch">Passwords do not match</p>
+      </section>
     </div>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
       const { createApp, ref } = Vue;
 
@@ -18,23 +36,58 @@
         setup() {
           const message = ref("Hello Vue!");
           const test = ref("test");
-          async function fetchData() {
+          const email = ref("");
+          const password = ref("");
+          const confirm_password = ref("");
+          const nomatch = ref(false);
+          async function signup() {
+            if (password.value !== confirm_password.value) {
+              console.error("Passwords do not match");
+              nomatch.value = true;
+              password.value = "";
+              confirm_password.value = "";
+              return;
+            } else {
+              try {
+                const response = await fetch("/signup", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    email: email.value,
+                    password: password.value,
+                  }),
+                });
+                const data = await response.json();
+                console.log(data);
+                nomatch.value = false;
+                email.value = "";
+                password.value = "";
+                confirm_password.value = "";
+                return data;
+              } catch (error) {
+                console.error("Error signing up:", error);
+              }
+            }
+          }
+          async function fetchHealth() {
             try {
               const response = await fetch("/health");
               const data = await response.json();
-              console.log(data);
               return data;
             } catch (error) {
               console.error("Error fetching data:", error);
             }
           }
-          fetchData().then((data) => {
-            if (data) {
-              message.value = data.message;
-            }
-          });
           return {
             message,
+            test,
+            email,
+            password,
+            confirm_password,
+            signup,
+            nomatch,
           };
         },
       }).mount("#app");
