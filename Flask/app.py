@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 from supabase import create_client, Client
 import importlib.metadata
@@ -31,6 +31,10 @@ def signup():
 
     return {'message': 'User signed up successfully'}    
 
+@app.route('/verify')
+def verified():
+    return render_template('verify.html')
+    
 @app.route('/health')
 def health():
     return {'OK': 200, 'Flask Version': flask_version}

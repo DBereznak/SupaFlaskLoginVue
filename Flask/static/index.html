@@ -8,7 +8,7 @@
   <body>
     <div id="app">
       <h1>Vue + Flask</h1>
-      <section>
+      <section v-if="mode === 'signup'">
         <form @submit.prevent="signup">
           <label for="email">Email:</label>
           <input id="email" type="text" placeholder="Email" v-model="email" />
@@ -26,6 +26,15 @@
           <button type="submit">Signup</button>
         </form>
         <p v-if="nomatch">Passwords do not match</p>
+        <button type="button" @click="mode = 'login'">
+          Click Here if you already have an account
+        </button>
+      </section>
+      <section v-if="mode === 'login'">
+        <h1>Login</h1>
+        <button type="button" @click="mode = 'signup'">
+          Click Here if you want to signup
+        </button>
       </section>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -40,6 +49,7 @@
           const password = ref("");
           const confirm_password = ref("");
           const nomatch = ref(false);
+          const mode = ref("signup");
           async function signup() {
             if (password.value !== confirm_password.value) {
               console.error("Passwords do not match");
@@ -88,6 +98,7 @@
             confirm_password,
             signup,
             nomatch,
+            mode,
           };
         },
       }).mount("#app");
