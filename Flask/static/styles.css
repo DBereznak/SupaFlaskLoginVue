@@ -1,0 +1,22 @@
+.link {
+  border: 0;
+  background: transparent;
+  padding: 10px 0;
+  color: blue;
+}
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.action {
+  border: 1px solid #4a6ab0;
+  border-radius: 6px;
+  background: #7796d9;
+  padding: 6px;
+  color: #fff;
+  transition: color 0.25s;
+}
+.action:hover {
+  background: #576ea1;
+  cursor: pointer;
+}

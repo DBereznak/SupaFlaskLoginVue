@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div id="app">
@@ -23,16 +24,16 @@
             v-model="confirm_password"
           />
           <br />
-          <button type="submit">Signup</button>
+          <button class="action" type="submit">Signup</button>
         </form>
         <p v-if="nomatch">Passwords do not match</p>
-        <button type="button" @click="mode = 'login'">
+        <button class="link" type="button" @click="mode = 'login'">
           Click Here if you already have an account
         </button>
       </section>
       <section v-if="mode === 'login'">
         <h1>Login</h1>
-        <button type="button" @click="mode = 'signup'">
+        <button class="link" type="button" @click="mode = 'signup'">
           Click Here if you want to signup
         </button>
       </section>
