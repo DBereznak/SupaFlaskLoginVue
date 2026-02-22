@@ -7,23 +7,34 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
-    <div id="app">
-      <h1>Vue + Flask</h1>
+    <div id="app" class="container">
+      <h1>{{mode === 'signup' ? 'Sign Up' : 'Log In'}}</h1>
       <section v-if="mode === 'signup'">
         <form @submit.prevent="signup">
-          <label for="email">Email:</label>
-          <input id="email" type="text" placeholder="Email" v-model="email" />
-          <br />
-          <label for="password">Password:</label>
-          <input id="password" type="password" v-model="password" />
-          <br />
-          <label for="confirm_password">Confirm Password:</label>
-          <input
-            id="confirm_password"
-            type="password"
-            v-model="confirm_password"
-          />
-          <br />
+          <div class="group">
+            <label for="email">Email:</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Email"
+              required
+              v-model="email"
+              @blur="checkEmail"
+            />
+          </div>
+          <p class="warning" v-if="showError">Please input a valid email</p>
+          <div class="group">
+            <label for="password">Password:</label>
+            <input id="password" type="password" v-model="password" />
+          </div>
+          <div class="group">
+            <label for="confirm_password">Confirm Password:</label>
+            <input
+              id="confirm_password"
+              type="password"
+              v-model="confirm_password"
+            />
+          </div>
           <button class="action" type="submit">Signup</button>
         </form>
         <p v-if="nomatch">Passwords do not match</p>
@@ -32,7 +43,17 @@
         </button>
       </section>
       <section v-if="mode === 'login'">
-        <h1>Login</h1>
+        <form @submit.prevent="login">
+          <div class="group">
+            <label for="email">Email:</label>
+            <input id="email" type="text" placeholder="Email" v-model="email" />
+          </div>
+          <div class="group">
+            <label for="password">Password:</label>
+            <input id="password" type="password" v-model="password" />
+          </div>
+          <button class="action" type="submit">Login</button>
+        </form>
         <button class="link" type="button" @click="mode = 'signup'">
           Click Here if you want to signup
         </button>
@@ -51,6 +72,10 @@
           const confirm_password = ref("");
           const nomatch = ref(false);
           const mode = ref("signup");
+          const showError = ref(false);
+          function checkEmail() {
+            showError.value = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+          }
           async function signup() {
             if (password.value !== confirm_password.value) {
               console.error("Passwords do not match");
@@ -82,6 +107,10 @@
               }
             }
           }
+
+          async function login() {
+            console.log("Signing In");
+          }
           async function fetchHealth() {
             try {
               const response = await fetch("/health");
@@ -100,6 +129,8 @@
             signup,
             nomatch,
             mode,
+            checkEmail,
+            showError,
           };
         },
       }).mount("#app");

@@ -1,13 +1,42 @@
+.container {
+  position: relative;
+  margin: 15% auto;
+  padding: 10px;
+  width: 400px;
+  border: 2px solid #4a6ab0;
+  border-radius: 6px;
+  background: #ebe8e8;
+  box-shadow: 5px 5px 5px #e8e8e8;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h1 {
+  color: #4a6ab0;
+  text-align: center;
+}
+
+form {
+  width: 90%;
+}
+
+.group {
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .link {
   border: 0;
   background: transparent;
   padding: 10px 0;
   color: blue;
 }
+
 .link:hover {
   text-decoration: underline;
   cursor: pointer;
 }
+
 .action {
   border: 1px solid #4a6ab0;
   border-radius: 6px;
@@ -16,7 +45,16 @@
   color: #fff;
   transition: color 0.25s;
 }
+
 .action:hover {
   background: #576ea1;
   cursor: pointer;
+}
+
+.warning {
+  color: red;
+  font-size: 12px;
+  margin: 0;
+  text-align: end;
+  padding-bottom: 5px;
 }
