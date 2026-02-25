@@ -31,6 +31,32 @@ def signup():
 
     return {'message': 'User signed up successfully'}    
 
+@app.post('/login')
+def login():
+    data = request.get_json()
+    email = data.get('email')   
+    password = data.get('password')
+    try: 
+        result = supabase.auth.sign_in_with_password(
+            {
+                "email": email,
+                "password": password        
+            }
+        )
+        print(result.session)
+        return jsonify({
+            "user": result.user.model_dump(),
+            "session": result.session.model_dump()
+        })
+    except Exception as e:   
+        return jsonify({
+            "error": "Invalid login credentials"
+        }), 400
+
+    
+
+    
+
 @app.route('/verify')
 def verified():
     return render_template('verify.html')

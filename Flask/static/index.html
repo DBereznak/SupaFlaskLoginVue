@@ -109,7 +109,28 @@
           }
 
           async function login() {
-            console.log("Signing In");
+            try {
+              const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  email: email.value,
+                  password: password.value,
+                }),
+              });
+              const data = await response.json();
+              if (!response.ok) {
+                console.error("Login failed:", data.error);
+                return;
+              }
+
+              email.value = "";
+              password.value = "";
+            } catch (error) {
+              console.error("Error signing in:", error);
+            }
           }
           async function fetchHealth() {
             try {
@@ -127,6 +148,7 @@
             password,
             confirm_password,
             signup,
+            login,
             nomatch,
             mode,
             checkEmail,
