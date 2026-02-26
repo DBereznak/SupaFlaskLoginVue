@@ -14,10 +14,10 @@ except importlib.metadata.PackageNotFoundError:
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
+jwks_url: str = os.environ.get("JWKS_URL")
 supabase: Client = create_client(url, key)
 
-JWKS_URL = "https://wldqojurxwlchifgzjxm.supabase.co/auth/v1/jwks"
-jwks = requests.get(JWKS_URL).json()
+jwks = requests.get(jwks_url).json()
 
 
 def verify_jwt(token: str):
