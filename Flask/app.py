@@ -1,5 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, redirect, url_for, jsonify, render_template
 import os
+import jwt
+from functools import wraps
+import requests
 from supabase import create_client, Client
 import importlib.metadata
 
@@ -13,7 +16,34 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
+JWKS_URL = "https://wldqojurxwlchifgzjxm.supabase.co/auth/v1/jwks"
+jwks = requests.get(JWKS_URL).json()
+
+
+def verify_jwt(token: str):
+    try:
+        return jwt.decode(
+            token, jwks, algorithms=["RS266"], audience="authenticated"
+        )
+    except Exception:
+        return None
     
+def require_auth(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        token = request.cookies.get("access_token")
+
+        if not token:
+            return redirect("/")
+
+        claims = verify_jwt(token)
+
+        if not claims:
+            return redirect("/")
+        return f(*args, claims=claims, **kwargs)
+
+    return wrapper
+
 @app.route('/')
 def index():
     return app.send_static_file("index.html")
@@ -43,24 +73,30 @@ def login():
                 "password": password        
             }
         )
-        print(result.session)
-        return jsonify({
-            "user": result.user.model_dump(),
-            "session": result.session.model_dump()
-        })
+        response = jsonify({"success": True})
+        response.set_cookie(
+            "access_token",
+            result.session.access_token,
+            httponly=True,
+            secure=False,  # True in production
+            samesite="None"
+        )
+        return response
+
     except Exception as e:   
         return jsonify({
             "error": "Invalid login credentials"
         }), 400
 
-    
-
-    
-
 @app.route('/verify')
 def verified():
     return render_template('verify.html')
-    
+
+@app.get('/logintest')
+@require_auth
+def loggedin(claims):
+    return render_template('logintest.html', user=claims)    
+
 @app.route('/health')
 def health():
     return {'OK': 200, 'Flask Version': flask_version}
