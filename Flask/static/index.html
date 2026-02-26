@@ -57,6 +57,8 @@
         <button class="link" type="button" @click="mode = 'signup'">
           Click Here if you want to signup
         </button>
+        <br />
+        <button class="link" type="button" @click="signout">Sign out</button>
       </section>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -132,6 +134,26 @@
               console.error("Error signing in:", error);
             }
           }
+
+          async function signout() {
+            try {
+              const response = await fetch("/signout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                console.error("Logout failed:", data.error);
+                return;
+              }
+              window.location.href = "/";
+            } catch (error) {
+              console.error("Error logging out:", error);
+            }
+          }
+
           async function fetchHealth() {
             try {
               const response = await fetch("/health");
@@ -153,6 +175,7 @@
             mode,
             checkEmail,
             showError,
+            signout,
           };
         },
       }).mount("#app");
